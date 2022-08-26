@@ -58,9 +58,6 @@ topology:
       exec:
         - bash /tmp/eth1.sh
 
-#        - ip addr add 192.168.1.10/24 dev bond0.1
-        # add config here for the bond on 4 links
-
   links:
     #######################################################
     ################## DCGW - Spine #######################
@@ -90,10 +87,6 @@ topology:
     ################ Leaf - Client/Host ###################
     #######################################################
     - endpoints: ["leaf1:e1-1", "client:eth1"]
-    - endpoints: ["leaf1:e1-2", "client:eth2"]
-    - endpoints: ["leaf2:e1-1", "client:eth3"]
-    - endpoints: ["leaf2:e1-2", "client:eth4"]
-    - endpoints: ["leaf3:e1-1", "client:eth5"]
-    - endpoints: ["leaf3:e1-2", "client:eth6"]
-    - endpoints: ["leaf4:e1-1", "client:eth7"]
-    - endpoints: ["leaf4:e1-2", "client:eth8"]
+    - endpoints: ["leaf2:e1-1", "client:eth2"]
+    - endpoints: ["leaf3:e1-1", "client:eth3"]
+    - endpoints: ["leaf4:e1-1", "client:eth4"]

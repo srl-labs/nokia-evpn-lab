@@ -225,7 +225,7 @@ arping -c1 -A -I bond0.1 192.168.1.10
 
 After execution, the MAC address of the client should be displayed, along with the Ethernet Segment Identifier.
 
-</pre>
+<pre>
 A:admin@dcgw1# show router bgp routes evpn mac
 ===============================================================================
  BGP Router ID:10.0.0.31        AS:65030       Local AS:65030

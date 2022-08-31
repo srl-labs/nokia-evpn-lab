@@ -3,6 +3,8 @@ Ethernet VPN proposes a unified model for VPNs and cloud-based services, by prov
 
 A Clos fabric, traditional architecture for data centers, will be deployed, as represented below. It includes a fabric made of SR Linux routers, along with two 7750 SR-1 routers acting as Data Center Gateways.
 
+![](underlay.png)
+
 ## Deploying the lab
 The lab is deployed with [containerlab](https://containerlab.dev) project where [`nokia-evpn.clab.yml`](nokia-evpn.clab.yml) file declaratively describes the lab topology.
 
@@ -33,7 +35,7 @@ docker exec -it clab-evpn-client1 bash
 All nodes come preconfigured thanks to startup-config setting in the topology file [`nokia-evpn.clab.yml`](nokia-evpn.clab.yml). Those configuration files can be found in [`configs`](/configs). 
 
 ### Underlay
-iBGP is used to provide underlay connectivity between the routers. The routes exchanged over those BGP sessions can be seen by executing the commands below.
+eBGP is used to provide underlay connectivity between the routers. The routes exchanged over those BGP sessions can be seen by executing the commands below.
 
 #### Leaf 1 (SR Linux)
 <pre>
@@ -108,7 +110,7 @@ Routes : 12
 
 
 ### Overlay
-MP-BGP is used to provide overlay connectivity between the routers, and to therefore exchange EVPN routes. A Layer-2 service is defined on the leafs, it gives access to a multi-homed node. Multi-homing with EVPN requires the advertisement of Ethernet Auto-Discovery routes between leafs and up to the DCGWs. Those routes can be seen with the commands provided below.
+MP-BGP is used to provide overlay connectivity between the routers, and to therefore exchange EVPN routes. A Layer-2 service is defined on the leafs, it gives access to two multi-homed nodes. Multi-homing with EVPN requires the advertisement of Ethernet Auto-Discovery routes between leafs and up to the DCGWs. Those routes can be seen with the commands provided below.
 
 #### Leaf 1 (SR Linux)
 <pre>
@@ -217,13 +219,17 @@ Routes : 16
 
 
 ### Advertising a MAC-IP route in the fabric
-Since we have two clients connected behind the leafs, and a routed interface on both DCGWs, we can use those to send traffic between them. This will therefore create an EVPN MAC-IP route containing the MAC address of both clients. Note that MAC-IP entries are already advertised for the DCGW's routed interface : this is expected since those interfaces are statically defined. To send traffic from one of the client, connect to one of those and execute the following command.
+On both DCGWs, a routed VPLS is defined and is connected to a VPRN instance, which contains a routed interface. This is illustrated on the figure below. With an interface on both DCGWs, we can use the clients to send traffic through the fabric. This will therefore create an EVPN MAC-IP route containing the MAC address of both clients. Note that MAC-IP entries are already advertised for the routed interface on the DCGWs : this is expected since those interfaces are statically defined. 
+
+To send traffic from one of the client, connect to one of those and execute the following command.
 
 ```bash
 ping 192.168.1.31
 ```
 
-After execution, the MAC address of the client should be displayed, along with the Ethernet Segment Identifier.
+![overlay](traffic.png)
+
+After execution, the MAC-IP route related to the client should be displayed, containing the MAC address along with the Ethernet Segment Identifier.
 
 <pre>
 A:admin@dcgw1# show router bgp routes evpn mac
